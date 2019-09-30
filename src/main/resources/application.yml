@@ -1,0 +1,77 @@
+server:
+  port: ${spring.boot.server.port:8810}
+
+spring: 
+  application:
+    name: authorization-server
+
+  security: 
+    check-user-scopes: true
+    signing:
+      key: ${as.token.signing.key:secretkey}
+
+  datasource:
+    url: jdbc:postgresql://${db.host:localhost}:${db.port:5432}/${db.name:oauth2}?useSSL=false
+    username: ${db.uid:as}
+    password: ${db.pwd:as}
+    testOnBorrow: true
+    validationQuery: SELECT 1
+    driver-class-name: org.postgresql.Driver
+    initialization-mode: always
+    platform: postgres
+
+    tomcat:
+      test-while-idle: true
+      validation-query: SELECT 1
+
+  jpa:
+    database: POSTGRESQL
+    show-sql: false
+    hibernate:
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      ddl-auto: validate
+    properties:
+      hibernate: 
+        jdbc.lob.non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+management.endpoints.web.exposure.include: health, info
+
+eureka: 
+  instance: 
+    preferIpAddress: true
+    hostname: ${server.name:}
+  client: 
+    enabled: ${eureka.enabled:false}
+    serviceUrl: 
+      defaultZone: ${eureka.uri:http://localhost:8800/eureka}
+
+liquibase.enabled: true
+
+logging:
+  path: logs/as
+
+---
+
+server:
+  port: 8811
+
+spring: 
+  profiles: as2
+
+---
+
+server:
+  port: 8812
+
+spring: 
+  profiles: as3
+
+---
+
+server:
+  port: 8813
+
+spring: 
+  profiles: as4

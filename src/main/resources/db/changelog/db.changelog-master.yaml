@@ -1,0 +1,266 @@
+########################################################################################
+#                                 Liquibase configuration 
+#
+# remember:
+# - no tabs; only spaces!
+# - changeSets that have been released CAN NOT be changed/altered.
+# - add new changeSets at the bottom of the file.
+########################################################################################
+databaseChangeLog:
+  - changeSet:
+      id : 20190808-1
+      author: menno
+      changes:
+      - createSequence:
+          sequenceName: hibernate_sequence
+          startValue: 1
+          cacheSize: 1
+      - createSequence:
+          sequenceName: user_id_seq
+          startValue: 1
+          cacheSize: 1
+      - createSequence:
+          sequenceName: role_id_seq
+          startValue: 1
+          cacheSize: 1
+      - createSequence:
+          sequenceName: user_role_id_seq
+          startValue: 1
+          cacheSize: 1
+      - createTable:
+          tableName: user
+          columns:
+          - column:
+              name: id
+              type: bigint
+              constraints:
+                  nullable: false
+                  primaryKey: true
+                  primaryKeyName: "id_user_pkey"
+              defaultValue: nextval('user_id_seq')
+          - column:
+              name: creation_time
+              type: "timestamp with time zone"
+              defaultValueComputed: clock_timestamp()
+              constraints:
+                  nullable: false
+          - column:
+              name: modification_time
+              type: "timestamp with time zone"
+              defaultValueComputed: clock_timestamp()
+              constraints:
+                  nullable: false
+          - column:
+              name: email
+              type: text
+              constraints:
+                  nullable: false
+                  unique: true
+          - column:
+              name: username
+              type: text
+              constraints:
+                  nullable: false
+                  unique: true
+          - column:
+              name: password
+              type: text
+              constraints:
+                  nullable: false
+          - column:
+              name: account_non_expired
+              type: boolean
+              constraints:
+                  nullable: false
+          - column:
+              name: account_non_locked
+              type: boolean
+              constraints:
+                  nullable: false
+          - column:
+              name: credentials_non_expired
+              type: boolean
+              constraints:
+                  nullable: false
+          - column:
+              name: enabled
+              type: boolean
+              constraints:
+                  nullable: false
+      - createTable:
+          tableName: role
+          columns:
+          - column:
+              name: id
+              type: bigint
+              constraints:
+                  nullable: false
+                  primaryKey: true
+                  primaryKeyName: "id_role_pkey"
+              defaultValue: nextval('role_id_seq')
+          - column:
+              name: creation_time
+              type: "timestamp with time zone"
+              defaultValueComputed: clock_timestamp()
+              constraints:
+                  nullable: false
+          - column:
+              name: modification_time
+              type: "timestamp with time zone"
+              defaultValueComputed: clock_timestamp()
+              constraints:
+                  nullable: false
+          - column: 
+              name: role
+              type: text
+              constraints:
+                  nullable: false
+      - createTable:
+          tableName: user_role
+          columns:
+          - column:
+              name: id
+              type: bigint
+              constraints:
+                  nullable: false
+                  primaryKey: true
+                  primaryKeyName: "id_user_role_pkey"
+              defaultValue: nextval('user_role_id_seq')
+          - column: 
+              name: user_id
+              type: bigint
+              constraints:
+                  nullable: false
+          - column: 
+              name: role_id
+              type: bigint
+              constraints:
+                  nullable: false
+      - addForeignKeyConstraint: 
+          baseColumnNames: user_id
+          baseTableName: user_role
+          constraintName: fk_user_role
+          referencedColumnNames: id
+          referencedTableName: user
+      - addForeignKeyConstraint: 
+          baseColumnNames: role_id
+          baseTableName: user_role
+          constraintName: fk_role_user
+          referencedColumnNames: id
+          referencedTableName: role
+      - createTable:
+          tableName: oauth_client_details
+          columns:
+          - column:
+              name: client_id
+              type: text
+              constraints:
+                  nullable: false
+                  primaryKey: true
+                  primaryKeyName: "id_oauth_client_details_pkey"
+          - column:
+              name: resource_ids
+              type: text
+          - column:
+              name: client_secret
+              type: text
+          - column:
+              name: scope
+              type: text
+          - column:
+              name: authorized_grant_types
+              type: text
+          - column:
+              name: web_server_redirect_uri
+              type: text
+          - column:
+              name: authorities
+              type: text
+          - column:
+              name: access_token_validity
+              type: bigint
+          - column:
+              name: refresh_token_validity
+              type: bigint
+          - column:
+              name: additional_information
+              type: text
+          - column:
+              name: autoapprove
+              type: text
+      - createTable:
+          tableName: oauth_access_token
+          columns:
+          - column:
+              name: authentication_id
+              type: text
+              constraints:
+                  nullable: false
+                  primaryKey: true
+                  primaryKeyName: "id_oauth_client_token_pkey"
+          - column:
+              name: token_id
+              type: text
+          - column:
+              name: token
+              type: longvarbinary
+          - column:
+              name: user_name
+              type: text
+          - column:
+              name: client_id
+              type: text
+          - column:
+              name: authentication
+              type: longvarbinary
+          - column:
+              name: refresh_token
+              type: text
+      - createTable:
+          tableName: oauth_refresh_token
+          columns:
+          - column:
+              name: token_id
+              type: text
+          - column:
+              name: token
+              type: longvarbinary
+          - column:
+              name: authentication
+              type: longvarbinary
+      - createTable:
+          tableName: oauth_code
+          columns:
+          - column:
+              name: code
+              type: text
+          - column:
+              name: authentication
+              type: longvarbinary
+      - createTable:
+          tableName: oauth_approvals
+          columns:
+          - column:
+              name: userId
+              type: text
+          - column:
+              name: clientId
+              type: text
+          - column:
+              name: scope
+              type: text
+          - column:
+              name: status
+              type: text
+          - column:
+              name: expiresAt
+              type: "timestamp with time zone"
+              defaultValueComputed: clock_timestamp()
+              constraints:
+                  nullable: false
+          - column:
+              name: lastModifiedAt
+              type: "timestamp with time zone"
+              defaultValueComputed: clock_timestamp()
+              constraints:
+                  nullable: false
